@@ -7,10 +7,10 @@
     @foreach (var img in Model.Images)
     {
         <div class="container text-center col-lg-4 col-md-6 col-sm-12">
-            @if (img.Path != null && img.Path != "")
+            @if (img.Img != null && img.Img != "")
             {
 
-                <img src="@img.Path"
+                <img src="@img.Img"
                      alt="@img.ImageType.ToString()" class="img-fluid rounded border border-dark">
             }
             else
@@ -20,7 +20,7 @@
             }
             <h5 class="text-primary font-weight-bold">@img.GetImageTypeDescription()</h5>
             <ul class="action-list list-unstyled list-inline">
-                @if (img.Path != null && img.Path != "")
+                @if (img.Img != null && img.Img != "")
                 {
                     <li><a asp-controller="UserData" asp-action="UpdateImageForm" asp-route-type="@img.ImageType" asp-route-date="@Model.SelectedDate." asp-route-id="@Model.SelectedId" data-tip="edit" class="list-inline-item"><i class="fa fa-edit" aria-hidden="true"></i></a></li>
                     <li><a asp-controller="UserData" asp-action="Delete" asp-route-date="@Model.SelectedDate.ToShortDateString()" asp-route-type="@img.ImageType" asp-route-id="@Model.SelectedId" data-tip="delete" class="list-inline-item"><i class="fa fa-trash" aria-hidden="true"></i></a></li>
@@ -37,7 +37,7 @@
     }
     <div class="container text-center col-12">
         <ul class="list-group list-unstyled d-flex flex-row flex-wrap justify-content-center">
-            <li class="border m-2 border-primary rounded"><a asp-controller="UserData" asp-action="Upload" asp-route-date="@DateTime.Today.ToShortDateString()" class="text-decoration-none list-group-item btn btn-outline-warning btn-lg px-5 py-3 fs-6 fw-bolder">Agregar nuevos datos</a></li>
+            <li class="border m-2 border-primary rounded"><a asp-controller="UserData" asp-action="UploadDate" asp-route-date="@DateTime.Today.ToShortDateString()" class="text-decoration-none list-group-item btn btn-outline-warning btn-lg px-5 py-3 fs-6 fw-bolder">Agregar nuevos datos</a></li>
         </ul>
     </div>
     @if (Model.Dates.Count() > 0)
@@ -55,7 +55,7 @@
                                     @imageDate.Date.ToString("MMMM yyyy")
                                 </a>
                             </li>
-                            <li><a asp-controller="UserData" asp-action="DeleteRow" asp-route-date="@Model.SelectedDate" asp-route-id="@Model.SelectedId" data-tip="delete" class="list-inline-item"><i class="fa fa-trash" aria-hidden="true"></i></a></li>
+                            <li><a asp-controller="UserData" asp-action="DeleteRow" asp-route-date="@imageDate.Date" asp-route-id="@imageDate.Id" data-tip="delete" class="list-inline-item"><i class="fa fa-trash" aria-hidden="true"></i></a></li>
 
                         </ul>
                     </li>

@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using System.IO;
 using System.Net;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using System;
 
 namespace DiegoMoyanoProject.Controllers
 {
@@ -45,7 +46,7 @@ namespace DiegoMoyanoProject.Controllers
                 {
                     maxDate = new FileDate();
                 }
-                if (IsOwner()) return RedirectToAction("IndexOwner", new { date = maxDate.Date, id = maxDate.Id });
+                if (IsOwner()) return RedirectToAction("IndexOwner","UserPdf", new { date = maxDate.Date, id = maxDate.Id });
                 return RedirectToAction("IndexDate", new { date = maxDate, id = maxDate.Id });
             }
             catch (Exception ex)
@@ -120,7 +121,7 @@ namespace DiegoMoyanoProject.Controllers
 
                 DateTime.TryParse(date, out dateTime);
                 _userPdfRepoository.DeletePdf(id);
-                return RedirectToAction("IndexOwner",new {date = dateTime, id = id});
+                return RedirectToAction("IndexOwner", "UserPdf", new {date = dateTime, id = id});
             }
             catch (Exception ex)
             {
@@ -129,19 +130,13 @@ namespace DiegoMoyanoProject.Controllers
             }
         }
 
-        public  IActionResult Upload(string date)
+        [HttpGet]
+        public IActionResult UploadDate(string date)
         {
             try
             {
                 if (IsNotLogued() || !IsOwner()) return RedirectToAction("Index", "Login");
-                DateTime dateTime;
-
-                if (DateTime.TryParse(date, out dateTime))
-                {
-                    _userPdfRepoository.AddDate(dateTime);
-                }
-
-                return RedirectToAction("IndexOwner", new { date = dateTime, id = _userPdfRepoository.GetMaxId()});
+                return View(new UploadDatePDFViewModel(date));
             }
             catch (InconsistenceInTheDBException ex)
             {
@@ -154,7 +149,29 @@ namespace DiegoMoyanoProject.Controllers
                 return BadRequest();
             }
         }
-
+        [HttpPost]
+        public IActionResult Upload(UploadDatePDFViewModel model)
+        {
+            try
+            {
+                if (IsNotLogued() || !IsOwner()) return RedirectToAction("Index", "Login");
+                if (!ModelState.IsValid) throw (new ModelStateInvalidException());
+                //I consider that if there arent images in the table, the id will not exist.
+                _userPdfRepoository.AddDate(model.Date);
+                return RedirectToAction("IndexOwner", "UserPdf", new { date = model.Date, id = _userPdfRepoository.GetMaxId() });
+            }
+            catch (InconsistenceInTheDBException ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest();
+            }
+        }
+        
         [HttpPost]
         public async Task<IActionResult> Update(UpdatePdfFormViewModel model)
         {

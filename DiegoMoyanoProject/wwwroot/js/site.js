@@ -27,7 +27,7 @@ function TranslateMonth(month) {
             break;
         case 'October': returnedMonth = 'Octubre';
             break;
-        case 'November': returnedMonth = 'November';
+        case 'November': returnedMonth = 'Noviembre';
             break;
         case 'December': returnedMonth = 'Diciembre';
             break;

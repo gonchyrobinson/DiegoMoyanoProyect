@@ -43,5 +43,5 @@ namespace DiegoMoyanoProject.ViewModels.UserData
             this.Date = date;
             this.Id = id;
         }
-    }
+    }  
 }

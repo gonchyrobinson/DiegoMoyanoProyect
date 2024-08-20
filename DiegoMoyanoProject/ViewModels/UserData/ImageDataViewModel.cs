@@ -10,12 +10,12 @@ namespace DiegoMoyanoProject.ViewModels.UserData
 
         public ImageDataViewModel(string? path, ImageType imageType, int id)
         {
-            Path = path;
+            Img = path;
             ImageType = imageType;
             Id = id;
         }
 
-        public string? Path { get; set; }
+        public string? Img { get; set; }
         public ImageType ImageType { get; set; }
         public int Id { get; set; }
         public string GetImageTypeDescription()

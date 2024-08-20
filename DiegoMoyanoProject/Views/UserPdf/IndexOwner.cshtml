@@ -40,7 +40,7 @@
     </div>
     <div class="container text-center col-12">
         <ul class="list-group list-unstyled d-flex flex-row flex-wrap justify-content-center">
-            <li class="border m-2 border-primary rounded"><a asp-controller="UserPdf" asp-action="Upload" asp-route-date="@DateTime.Today.ToShortDateString()" class="text-decoration-none list-group-item btn btn-outline-warning btn-lg px-5 py-3 fs-6 fw-bolder">Agregar nuevos datos</a></li>
+            <li class="border m-2 border-primary rounded"><a asp-controller="UserPdf" asp-action="UploadDate" asp-route-date="@DateTime.Today.ToShortDateString()" class="text-decoration-none list-group-item btn btn-outline-warning btn-lg px-5 py-3 fs-6 fw-bolder">Agregar nuevos datos</a></li>
         </ul>
     </div>
     @if (Model.Dates.Count() > 0)
@@ -58,7 +58,7 @@
 
                                 </a>
                             </li>
-                            <li><a asp-controller="UserPdf" asp-action="DeleteRow" asp-route-id="@Model.SelectedId" data-tip="delete" class="list-inline-item"><i class="fa fa-trash" aria-hidden="true"></i></a></li>
+                            <li><a asp-controller="UserPdf" asp-action="DeleteRow" asp-route-id="@modelDate.Id" data-tip="delete" class="list-inline-item"><i class="fa fa-trash" aria-hidden="true"></i></a></li>
 
                         </ul>
                     </li>

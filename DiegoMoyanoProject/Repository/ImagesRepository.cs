@@ -67,7 +67,7 @@ namespace DiegoMoyanoProject.Repository
             using (var connection = new SqliteConnection(_connectionString))
             {
                 var command = new SqliteCommand(queryString, connection);
-                command.Parameters.Add(new SqliteParameter("@newImg", img.Path));
+                command.Parameters.Add(new SqliteParameter("@newImg", img.Img));
                 command.Parameters.Add(new SqliteParameter("@id", id));
                 connection.Open();
                 updated = command.ExecuteNonQuery() > 0;
@@ -80,7 +80,7 @@ namespace DiegoMoyanoProject.Repository
             bool deleted = false;
             if (this.countImagesAdded() >= maxSupported)
             {
-                string queryString = "DELETE FROM Images WHERE id = (select min(id) from Images)";
+                string queryString = "DELETE FROM Images WHERE dateUploaded = (select min(dateUploaded) from Images)";
                 using (var connection = new SqliteConnection(_connectionString))
                 {
                     var command = new SqliteCommand(queryString, connection);

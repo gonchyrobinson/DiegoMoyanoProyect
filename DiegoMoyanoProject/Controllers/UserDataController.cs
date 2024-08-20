@@ -92,7 +92,7 @@ namespace DiegoMoyanoProject.Controllers
                 {
                     var img = _imagesRepository.getImage( type, id);
                     if (img == null) img = new ImageFile(type, id);
-                    _logger.LogInformation("Imagen obtenida de la DB de " + type.ToString() + " :   " + img.Path + "  .  La fecha en el formato enviado es: " + date.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture));
+                    _logger.LogInformation("Imagen obtenida de la DB de " + type.ToString() + " :   " + img.Img + "  .  La fecha en el formato enviado es: " + date.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture));
                     listImages.Add(img);
                 }
                 var listImagesVm = new List<ImageDataViewModel>();
@@ -100,8 +100,8 @@ namespace DiegoMoyanoProject.Controllers
                 string mensaje = "";
                 foreach (var item in listImages)
                 {
-                    listImagesVm.Add(new ImageDataViewModel(item.Path, item.ImageType, id));
-                    mensaje += " - " + item.Path;
+                    listImagesVm.Add(new ImageDataViewModel(item.Img, item.ImageType, id));
+                    mensaje += " - " + item.Img;
                 }
                 _logger.LogInformation("Rutas obtenidas al mapear: " + mensaje);
                 var listDates = _imagesRepository.GetAllDatesAndId();
@@ -142,9 +142,7 @@ namespace DiegoMoyanoProject.Controllers
 
                 if (DateTime.TryParse(date, out dateTime))
                 {
-                    DeleteImageFromLocalEnviorment(type, id);
                     _imagesRepository.Delete( type, id);
-
                 }
                 return RedirectToAction("Index");
 
@@ -161,7 +159,7 @@ namespace DiegoMoyanoProject.Controllers
             try
             {
                 if (IsNotLogued() || !IsOwner()) return RedirectToAction("Index", "Login");
-                if(_imagesRepository.DeleteRow(id)) DeleteImagesFolder(getLocalFolder(date,id));
+                _imagesRepository.DeleteRow(id);
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
@@ -172,21 +170,35 @@ namespace DiegoMoyanoProject.Controllers
         }
 
         [HttpGet]
-        public IActionResult Upload(string date)
+        public IActionResult UploadDate(string date)
+        {
+            try
+            {
+                if (IsNotLogued() || !IsOwner()) return RedirectToAction("Index", "Login");
+                return View(new UploadDateViewModel(date));
+            }
+            catch (InconsistenceInTheDBException ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest();
+            }
+        }
+        [HttpPost]
+        public IActionResult Upload(UploadDateViewModel model)
         {
             try
             {
                 if (IsNotLogued() || !IsOwner()) return RedirectToAction("Index", "Login");
                 if (!ModelState.IsValid) throw (new ModelStateInvalidException());
-                DateTime dateTime;
-
-                if (DateTime.TryParse(date, out dateTime))
-                {
                     //I consider that if there arent images in the table, the id will not exist.
-                    int maxId = (_imagesRepository.countImagesAdded() > 0) ? Convert.ToInt32(_imagesRepository.GetMaxId()) : -1;
-                    if (_imagesRepository.deleteOlderIfNeeded()) DeleteImagesFolder(getLocalFolder(dateTime, maxId));
-                    if (_imagesRepository.AddDate(dateTime)) createFolderForImages(dateTime, Convert.ToInt32(_imagesRepository.GetMaxId()));
-                }
+                int maxId = (_imagesRepository.countImagesAdded() > 0) ? Convert.ToInt32(_imagesRepository.GetMaxId()) : -1;
+                _imagesRepository.deleteOlderIfNeeded();
+                _imagesRepository.AddDate(model.Date);
                 return RedirectToAction("Index");
             }
             catch (InconsistenceInTheDBException ex)
@@ -212,18 +224,14 @@ namespace DiegoMoyanoProject.Controllers
                 if (!ModelState.IsValid) throw (new ModelStateInvalidException());
                 if (model.InputFile == null) return RedirectToAction("Index");
                 string filePath, fileNetworkPath;
-                createPathsForSavingTheImages(model.ImageType, model.InputFile.FileName, model.Date, model.Id, out filePath, out fileNetworkPath);
-                DeleteImageFromLocalEnviorment(model.ImageType, model.Id);
-                SaveImageInCreatedFolderAnUpdateInDB(model, filePath, fileNetworkPath);
-                //using (MemoryStream memoryStream = new MemoryStream())
-                //{
-                //    IFormFile file = (IFormFile)model.InputFile;
-                //    await (file.CopyToAsync(memoryStream));
-                //    var img = Convert.ToBase64String(memoryStream.ToArray());
-                //    var type = Path.GetExtension(model.InputFile.FileName).Split('.').Last();
-                //    _imagesRepository.Update(new ImageFile(type, img, model.ImageType), model.Date);
-
-                //}
+                using (MemoryStream memoryStream = new MemoryStream())
+                {
+                    IFormFile file = (IFormFile)model.InputFile;
+                    await (file.CopyToAsync(memoryStream));
+                    var img = Convert.ToBase64String(memoryStream.ToArray());
+                    var type = Path.GetExtension(model.InputFile.FileName).Split('.').Last();
+                    _imagesRepository.Update(new ImageFile(type, img, model.ImageType), model.Id);
+                }
                 return RedirectToAction("IndexOwner", new { date = model.Date, id = model.Id });
             }
             catch (InconsistenceInTheDBException ex)
@@ -291,7 +299,7 @@ namespace DiegoMoyanoProject.Controllers
         private void DeleteImageFromLocalEnviorment(ImageType imageType, int id)
         {
             var deleteImage = _imagesRepository.getImage(imageType, id);
-            if (deleteImage != null && deleteImage.Path != "") System.IO.File.Delete(getLocalPathFromDBReadenPath(deleteImage.Path));
+            if (deleteImage != null && deleteImage.Img != "") System.IO.File.Delete(getLocalPathFromDBReadenPath(deleteImage.Img));
         }
 
         private string getLocalPathFromDBReadenPath(string DBPath)

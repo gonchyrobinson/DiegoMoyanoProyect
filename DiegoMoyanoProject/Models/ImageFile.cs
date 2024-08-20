@@ -2,22 +2,22 @@
 {
     public class ImageFile
     {
-        private string? path;
+        private string? img;
         private ImageType _ImageType;
         private int id;
         public ImageFile(string? blob64img, ImageType type)
         {
-            this.path = blob64img;
+            this.img = blob64img;
             _ImageType = type;
         }
         public ImageFile(ImageType type)
         {
-            this.path = null;
+            this.img = null;
             _ImageType = type;
         }
         public ImageFile(ImageType type, int id)
         {
-            this.path = null;
+            this.img = null;
             _ImageType = type;
             this.id = id;
         }
@@ -27,7 +27,7 @@
         }
         public ImageFile(string type, string blob64string, ImageType t)
         {
-            this.path = "data:image/"+type+";base64,"+blob64string;
+            this.img = "data:image/"+type+";base64,"+blob64string;
             this._ImageType = t;
         }
 
@@ -36,7 +36,7 @@
             this.id = id;
         }
 
-        public string? Path { get => path; set => path = value; }
+        public string? Img { get => img; set => img = value; }
         public ImageType ImageType { get => _ImageType; set => _ImageType = value; }
         public int Id { get => id; set => id = value; }
     }

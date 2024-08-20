@@ -10,7 +10,7 @@
         @foreach (var img in Model.Images)
         {
             <div class="container text-center col-lg-4 col-md-6 col-sm-12">
-                <img src="@img.Path"
+                <img src="@img.Img"
                      alt="@img.GetImageTypeDescription()" class="img-fluid rounded border border-dark">
 
                 <h5 class="text-primary font-weight-bold">@img.GetImageTypeDescription()</h5>
