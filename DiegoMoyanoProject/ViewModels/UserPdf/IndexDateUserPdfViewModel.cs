@@ -14,7 +14,7 @@ namespace DiegoMoyanoProject.ViewModels.UserPdf
         {
             Pdf = pdf;
             Dates = dates;
-            SelectedDate = selectedDate.ToString("dd/MM/yyyy");
+            SelectedDate = selectedDate.ToString("MMMM yyyy");
         }
 
     }

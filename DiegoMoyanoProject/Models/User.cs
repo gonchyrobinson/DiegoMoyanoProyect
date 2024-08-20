@@ -49,6 +49,13 @@
             this.rentability = rentability;
         }
 
+        public User(int id, decimal capitalInvested, decimal rentability)
+        {
+            this.id = id;
+            this.capitalInvested = capitalInvested;
+            this.rentability = rentability;
+        }
+
         public int Id { get => id; set => id = value; }
         public string Mail { get => mail; set => mail = value; }
         public string Pass { get => pass; set => pass = value; }

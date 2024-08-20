@@ -1,9 +1,9 @@
-﻿@model DiegoMoyanoProject.ViewModels.UserPdf.IndexDateUserPdfViewModel;
-
+﻿@using DiegoMoyanoProject.ViewModels.UserPdf;
+@model DiegoMoyanoProject.ViewModels.UserPdf.IndexDateUserPdfViewModel;
 @if (Model.Pdf != null)
 {
     <div class="container text-center">
-        <h1 class="display-4">Reporte de datos del @Model.SelectedDate</h1>
+        <h1 class="display-4" id="UserPdfTitleMessageNotO">Reporte de datos del @Model.SelectedDate</h1>
     </div>
 
     <div class="gallery container row" onclick="openLightbox(event)">
@@ -48,14 +48,32 @@ else
         <ul class="list-group list-unstyled d-flex flex-row flex-wrap justify-content-center">
             @foreach (var modelDate in Model.Dates)
             {
+                var order = 1;
+                var idForDate = "DatesUserData_" + order;
                 <li class="border m-2 border-primary rounded">
-                    <a asp-controller="UserPdf" asp-action="IndexDate" asp-route-date="@modelDate.Date.ToString("yyyy-MM-dd")" asp-route-id="@modelDate.Id" class="text-decoration-none list-group-item btn btn-outline-primary btn-lg px-5 py-3 fs-6 fw-bolder">
-                        @modelDate.Date.ToString("yyyy-MM-dd")
+                    <a asp-controller="UserPdf" asp-action="IndexDate" asp-route-date="@modelDate.Date.ToString("yyyy-MM-dd")" asp-route-id="@modelDate.Id" class="text-decoration-none list-group-item btn btn-outline-primary btn-lg px-5 py-3 fs-6 fw-bolder" id="@idForDate" data-info="@modelDate.Date.ToString("MMMM yyyy")">
+                        @modelDate.Date.ToString("dd-MM-yyyy")
                     </a>
                 </li>
             }
         </ul>
     </div>
+}
+@section Scripts {
+    <script>
+        window.onload = function () {
+            const element = document.getElementById('UserPdfTitleMessageNotO');
+            const title = 'Reportes de ';
+            displayMessage(element, title, '@Model.SelectedDate');
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            const links = document.querySelectorAll('a[data-info]');
+            links.forEach(link => {
+                const date = link.getAttribute('data-info');
+                displaySelectedDateA(link, date)
+            });
+        });
+    </script>
 }
 
 

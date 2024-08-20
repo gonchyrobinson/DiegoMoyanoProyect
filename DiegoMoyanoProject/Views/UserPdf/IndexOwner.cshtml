@@ -1,7 +1,8 @@
 ﻿@using DiegoMoyanoProject.ViewModels.UserPdf ;
 @model IndexOwnerUserPdfViewModel
+
 <div class="container text-center">
-    <h1 class="display-4">Reportes del @Model.SelectedDate.ToShortDateString()</h1>
+    <h1 class="display-4" id="UserPdfTitleMessage"></h1>
 </div>
 
 <div class="container row">
@@ -48,11 +49,13 @@
             <ul class="list-group list-unstyled d-flex flex-row flex-wrap justify-content-center">
                 @foreach (var modelDate in Model.Dates)
                 {
+                    var order = 1;
+                    var idForDate = "DatesUserData_" + order;
                     <li class="border m-2 border-primary rounded">
                         <ul class="action-list list-unstyled list-inline">
                             <li>
-                                <a asp-controller="UserPdf" asp-action="IndexOwner" asp-route-date="@modelDate.Date.ToString("yyyy-MM-dd")" asp-route-id="@modelDate.Id" class="text-decoration-none list-group-item btn btn-outline-primary btn-lg px-5 py-3 fs-6 fw-bolder">
-                                    @modelDate.Date.ToString("yyyy-MM-dd")
+                                <a asp-controller="UserPdf" asp-action="IndexOwner" asp-route-date="@modelDate.Date.ToString("yyyy-MM-dd")" asp-route-id="@modelDate.Id" class="text-decoration-none list-group-item btn btn-outline-primary btn-lg px-5 py-3 fs-6 fw-bolder" id="@idForDate" data-info="@modelDate.Date.ToString("MMMM yyyy")">
+
                                 </a>
                             </li>
                             <li><a asp-controller="UserPdf" asp-action="DeleteRow" asp-route-id="@Model.SelectedId" data-tip="delete" class="list-inline-item"><i class="fa fa-trash" aria-hidden="true"></i></a></li>
@@ -66,4 +69,19 @@
     }
 
 </div>
-
+@section Scripts {
+    <script>
+        window.onload = function () {
+            const element = document.getElementById('UserPdfTitleMessage');
+            const title = 'Reportes de ';
+            displayMessage(element, title, '@Model.SelectedDate.ToString("MMMM yyyy")');
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            const links = document.querySelectorAll('a[data-info]');
+            links.forEach(link => {
+                const date = link.getAttribute('data-info');
+                displaySelectedDateA(link, date)
+            });
+        });
+    </script>
+}

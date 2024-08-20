@@ -17,7 +17,8 @@ namespace DiegoMoyanoProject.Mapper
 
             CreateMap<User, UpdateUserViewModel>().
             ReverseMap();
-
+            CreateMap<User, UserUploadDataViewModel>().
+            ReverseMap();
             CreateMap<User, UserViewDataViewModel>().
             ReverseMap();
 

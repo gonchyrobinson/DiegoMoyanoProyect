@@ -1,7 +1,7 @@
 ﻿@model DiegoMoyanoProject.ViewModels.UserData.IndexOwnerUserDataViewModel;
 @using System.ComponentModel;
 <div class="container text-center">
-    <h1 class="display-4">Datos de Usuario del @Model.SelectedDate.ToString("dd/MM/yyyy")</h1>
+    <h1 class="display-4" id="UserDataOwner"></h1>
 </div>
 <div class="gallery container row" onclick="openLightbox(event)">
     @foreach (var img in Model.Images)
@@ -46,11 +46,13 @@
             <ul class="list-group list-unstyled d-flex flex-row flex-wrap justify-content-center">
                 @foreach (var imageDate in Model.Dates)
                 {
+                    var order = 1;
+                    var idForDate = "DatesUserData_" + order;
                     <li class="border m-2 border-primary rounded">
                         <ul class="action-list list-unstyled list-inline">
                             <li>
-                                <a asp-controller="UserData" asp-action="IndexOwner" asp-route-date="@imageDate.Date.ToString("yyyy-MM-dd")" asp-route-id="@imageDate.Id" class="text-decoration-none list-group-item btn btn-outline-primary btn-lg px-5 py-3 fs-6 fw-bolder">
-                                    @imageDate.Date.ToString("yyyy-MM-dd")
+                                <a asp-controller="UserData" asp-action="IndexOwner" asp-route-date="@imageDate.Date.ToString("yyyy-MM-dd")" asp-route-id="@imageDate.Id" class="text-decoration-none list-group-item btn btn-outline-primary btn-lg px-5 py-3 fs-6 fw-bolder" id="@idForDate" data-info="@imageDate.Date.ToString("MMMM yyyy")">
+                                    @imageDate.Date.ToString("MMMM yyyy")
                                 </a>
                             </li>
                             <li><a asp-controller="UserData" asp-action="DeleteRow" asp-route-date="@Model.SelectedDate" asp-route-id="@Model.SelectedId" data-tip="delete" class="list-inline-item"><i class="fa fa-trash" aria-hidden="true"></i></a></li>
@@ -77,3 +79,19 @@
         <button id="prev-btn3" onclick="changeImage(-1)">&lt; Prev</button>
         <button id="next-btn3" onclick="changeImage(1)">Next &gt;</button>
     </div>
+    @section Scripts {
+        <script>
+            window.onload = function () {
+                const element = document.getElementById('UserDataOwner');
+                const title = 'Datos de ';
+                displayMessage(element, title, '@Model.SelectedDate.ToString("MMMM yyyy")');
+            }
+            document.addEventListener('DOMContentLoaded', function () {
+                const links = document.querySelectorAll('a[data-info]');
+                links.forEach(link => {
+                    const date = link.getAttribute('data-info');
+                    displaySelectedDateA(link, date)
+                });
+            });
+        </script>
+    }

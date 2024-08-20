@@ -4,6 +4,56 @@
 // Write your JavaScript code.
 
 
+function TranslateMonth(month) {
+    let returnedMonth = '';
+    switch (month) {
+        case 'January': returnedMonth = 'Enero';
+            break;
+        case 'Febraury': returnedMonth = 'Febrero';
+            break;
+        case 'March': returnedMonth = 'Marzo';
+            break;
+        case 'April': returnedMonth = 'Abril';
+            break;
+        case 'May': returnedMonth = 'Mayo';
+            break;
+        case 'June': returnedMonth = 'Junio';
+            break;
+        case 'July': returnedMonth = 'Julio';
+            break
+        case 'August': returnedMonth = 'Agosto';
+            break;
+        case 'September': returnedMonth = 'Septiembre';
+            break;
+        case 'October': returnedMonth = 'Octubre';
+            break;
+        case 'November': returnedMonth = 'November';
+            break;
+        case 'December': returnedMonth = 'Diciembre';
+            break;
+        default: returnedMonth = month;
+            break;
+    }
+    return returnedMonth;
+}
+function getTranslatedDate(date) {
+    const splitedDate = date.split(' ');
+    const displayedMonth = TranslateMonth(splitedDate[0]);
+    const displayedDate = displayedMonth + ' de ' + splitedDate[1];
+    return displayedDate;
+}
+function displayMessage(element, title, date) {
+    const displayedDate = getTranslatedDate(date);
+    console.log(displayedDate);
+    let displayMessage = title + displayedDate;
+    if (date == 'January 0001') displayMessage = "Seleccione una fecha";
+    element.innerText = displayMessage;
+}
+function displaySelectedDateA(element, date) {
+    const displayedDate = getTranslatedDate(date);
+    console.log(displayedDate);
+    element.innerText = displayedDate;
+}
 // To add keyboard navigation (left/right arrow keys
 const lightbox = document.getElementById('lightbox') || document.getElementById('lightbox2') || document.getElementById('lightbox3');
 const lightboxImg = document.getElementById('lightbox-img') || document.getElementById('lightbox-img2') || document.getElementById('lightbox-img3');
@@ -43,21 +93,23 @@ function changeImage(direction) {
 
 // Update the lightbox image and thumbnails
 function updateLightboxImage() {
-    lightboxImg.src = images[currentIndex].src;
+    if(lightboxImg!= null && lightboxImg!=undefined)lightboxImg.src = images[currentIndex].src;
 
-    thumbnailContainer.innerHTML = '';
+    if (thumbnailContainer != null && thumbnailContainer != undefined) {
+        thumbnailContainer.innerHTML = '';
 
-    images.forEach((image, index) => {
-        const thumbnail = document.createElement('img');
-        thumbnail.src = image.src;
-        thumbnail.alt = `Thumbnail ${index + 1}`;
-        thumbnail.classList.add('thumbnail');
-        thumbnail.addEventListener('click', () => updateMainImage(index));
-        thumbnailContainer.appendChild(thumbnail);
-    });
+        images.forEach((image, index) => {
+            const thumbnail = document.createElement('img');
+            thumbnail.src = image.src;
+            thumbnail.alt = `Thumbnail ${index + 1}`;
+            thumbnail.classList.add('thumbnail');
+            thumbnail.addEventListener('click', () => updateMainImage(index));
+            thumbnailContainer.appendChild(thumbnail);
+        });
 
-    const thumbnails = document.querySelectorAll('.thumbnail');
-    thumbnails[currentIndex].classList.add('active-thumbnail');
+        const thumbnails = document.querySelectorAll('.thumbnail');
+        thumbnails[currentIndex].classList.add('active-thumbnail');
+    }
 }
 
 // Update the main lightbox image when a thumbnail is clicked
@@ -71,7 +123,7 @@ updateLightboxImage();
 
 // To add keyboard navigation (left/right arrow keys)
 document.addEventListener('keydown', function (e) {
-    if (lightbox.style.display === 'flex') {
+    if ( lightbox!=null && lightbox.style.display === 'flex') {
         if (e.key === 'ArrowLeft') {
             changeImage(-1);
         } else if (e.key === 'ArrowRight') {
@@ -108,3 +160,5 @@ function ShowImg(byteImg) {
         URL.revokeObjectURL(imageUrl);
     };
 }
+
+

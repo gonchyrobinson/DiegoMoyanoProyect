@@ -3,7 +3,7 @@
 @if (Model.Images.Count() > 0)
 {
     <div class="container text-center">
-        <h1 class="display-4">Datos de Ventas del @Model.SelectedDate</h1>
+        <h1 class="display-4" id="UserDataTitleNotO"></h1>
     </div>
 
     <div class="gallery container row" onclick="openLightbox(event)">
@@ -40,13 +40,14 @@
     </div>
     @if (Model.Dates.Count() > 0)
     {
+        var order = 1;
+        var idForDate = "DatesUserData_" + order;
         <div class="container text-center" id="dates-container">
             <ul class="list-group list-unstyled d-flex flex-row flex-wrap justify-content-center">
                 @foreach (var imageDate in Model.Dates)
                 {
                     <li class="border m-2 border-primary rounded">
-                        <a asp-controller="UserData" asp-action="IndexDate" asp-route-date="@imageDate.Date.ToString("yyyy-MM-dd")" asp-route-id="@imageDate.Id" class="text-decoration-none list-group-item btn btn-outline-primary btn-lg px-5 py-3 fs-6 fw-bolder">
-                            @imageDate.Date.ToString("yyyy-MM-dd")
+                        <a asp-controller="UserData" asp-action="IndexDate" asp-route-date="@imageDate.Date.ToString("yyyy-MM-dd")" asp-route-id="@imageDate.Id" class="text-decoration-none list-group-item btn btn-outline-primary btn-lg px-5 py-3 fs-6 fw-bolder" id="@idForDate" data-info="@imageDate.Date.ToString("MMMM yyyy")">
                         </a>
                     </li>
                 }
@@ -74,6 +75,22 @@ else
             </div>
         </div>
     </section>
+}
+@section Scripts {
+    <script>
+        window.onload = function () {
+            const element = document.getElementById('UserDataTitleNotO');
+            const title = 'Datos de ';
+            displayMessage(element, title, '@Model.SelectedDate');
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            const links = document.querySelectorAll('a[data-info]');
+            links.forEach(link => {
+                const date = link.getAttribute('data-info');
+                displaySelectedDateA(link, date)
+            });
+        });
+    </script>
 }
 
 
